@@ -1,4 +1,5 @@
 <?php
+include_once "JsonHelper.php";
 
 /**
  * Created by IntelliJ IDEA.
@@ -11,10 +12,11 @@ class User
     private $username = "";
     private $password = "";
     private $jsonString = "";
+    private $jsonHelper;
 
     static function fromFile($username)
     {
-        $filename = $username . "_" . ".json";
+        $filename = "users/". $username . ".json";
         $json = json_decode(file_get_contents($filename));
         $username = $json->{'username'};
         $password = $json->{'password'};
@@ -24,10 +26,23 @@ class User
         return $user;
     }
 
+    static function userExists($username)
+    {
+        if(file_exists(FileTools::getFileName($username)))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     public function __construct($username, $password)
     {
         $this->username = $username;
         $this->password = $password;
+        $this->jsonHelper = new JsonHelper($this);
     }
 
     public function setJSONString($jsonString)
@@ -35,9 +50,8 @@ class User
         $this->jsonString = $jsonString;
     }
 
-    public function toJSON()
+    private function toJSON()
     {
-        $this->username;
         $json = array
         (
             "username" => $this->username,
@@ -45,6 +59,16 @@ class User
             "jsonString" => $this->jsonString,
         );
         return json_encode($json, JSON_PRETTY_PRINT);
+    }
+
+    public function addToJSON($jsonString)
+    {
+        $this->jsonHelper->addToJSON($jsonString);
+    }
+
+    public function save()
+    {
+        file_put_contents(FileTools::getFileName($this->username),$this->toJSON());
     }
 
     /**
@@ -70,8 +94,6 @@ class User
     {
         return $this->jsonString;
     }
-
-
 
     public function fromJSON($string)
     {
