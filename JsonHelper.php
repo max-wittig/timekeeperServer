@@ -15,7 +15,6 @@ class JsonHelper
     public function __construct($user)
     {
         $this->user = $user;
-        $this->parse();
     }
 
     private function parse()
@@ -39,13 +38,119 @@ class JsonHelper
     private function getArray()
     {
         $user = $this->user;
-        echo "Test".$user->getJsonString();
         $json = json_decode($user->getJsonString());
         return $json;
     }
 
+    private function containsProject($projectName)
+    {
+        $saveProjectArray = $this->saveProjectArray;
+        //find project
+        for($i=0; $i < sizeof($saveProjectArray); $i++)
+        {
+            if($saveProjectArray[$i]->{'name'} == $projectName)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function containsTask($taskName, $projectName)
+    {
+        $saveProjectArray = $this->saveProjectArray;
+        //find project
+        for($i=0; $i < sizeof($saveProjectArray); $i++)
+        {
+            if($saveProjectArray[$i]->{'name'} == $projectName)
+            {
+                $taskList = $saveProjectArray[$i]->{'taskList'};
+                if(in_array($taskName, $taskList))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+
+    private function addTaskToProject($taskName, $projectName)
+    {
+        $saveProjectArray = $this->saveProjectArray;
+        //find project
+        for($i=0; $i < sizeof($saveProjectArray); $i++)
+        {
+            if($saveProjectArray[$i]->{'name'} == $projectName)
+            {
+                $taskList = $saveProjectArray[$i]->{'taskList'};
+                array_push($taskList, $taskName);
+                return;
+            }
+        }
+    }
+
+    private function addProject($projectName, $taskName)
+    {
+        $projectArray = array(
+            "name" => $projectName,
+            "taskList" => [$taskName],
+            "frozen" => false,
+            "tags" => []
+        );
+        array_push($this->saveProjectArray, $projectArray);
+    }
+
+    private function addProjectToSaveProjectArray($timeKeeperObject)
+    {
+        echo json_encode($timeKeeperObject);
+        $projectName = $timeKeeperObject->{'projectName'};
+        $taskName = $timeKeeperObject->{'taskName'};
+
+        if($this->containsProject($projectName))
+        {
+            if($this->containsTask($taskName,$projectName))
+            {
+                return;
+            }
+            else
+            {
+                $this->addTaskToProject($taskName,$projectName);
+            }
+        }
+        else
+        {
+            $this->addProject($projectName, $taskName);
+        }
+    }
+
+    private function getCompleteJSON()
+    {
+        $array = array(
+            "saveProjectArray" => $this->saveProjectArray,
+            "saveObjectArray" => $this->saveObjectArray
+        );
+
+        return json_encode($array);
+    }
+
+    private function addObject($timeKeeperObject)
+    {
+        array_push($this->saveObjectArray,$timeKeeperObject);
+    }
+
     public function addToJSON($jsonString)
     {
+        $this->parse();
+        $timeKeeperObject = json_decode($jsonString)->{'saveObject'};
+        $this->addObject($timeKeeperObject);
+        $this->addProjectToSaveProjectArray($timeKeeperObject);
+        $this->user->setJSONString($this->getCompleteJSON());
+        echo json_encode($this->saveProjectArray);
+
 
     }
 }
