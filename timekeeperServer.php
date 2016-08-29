@@ -6,6 +6,11 @@ header('Access-Control-Allow-Origin: *');
 
 if ($_SERVER['REQUEST_METHOD'] == "POST")
 {
+    $username = "";
+    $password = "";
+    $jsonString = "";
+    $complete = "";
+
     if(isset($_POST['username']))
         $username = $_POST['username'];
     if(isset($_POST['password']))
