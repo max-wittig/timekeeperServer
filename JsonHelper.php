@@ -87,7 +87,16 @@ class JsonHelper
             if($saveProjectArray[$i]->{'name'} == $projectName)
             {
                 $taskList = $saveProjectArray[$i]->{'taskList'};
+                for($j=0; $j < sizeof($taskList); $j++)
+                {
+                    if($taskList[$j] == $taskName)
+                    {
+                        return;
+                    }
+                }
                 array_push($taskList, $taskName);
+                $saveProjectArray[$i]->{'taskList'} = $taskList;
+
                 return;
             }
         }
@@ -106,7 +115,6 @@ class JsonHelper
 
     private function addProjectToSaveProjectArray($timeKeeperObject)
     {
-        echo json_encode($timeKeeperObject);
         $projectName = $timeKeeperObject->{'projectName'};
         $taskName = $timeKeeperObject->{'taskName'};
 
@@ -149,8 +157,5 @@ class JsonHelper
         $this->addObject($timeKeeperObject);
         $this->addProjectToSaveProjectArray($timeKeeperObject);
         $this->user->setJSONString($this->getCompleteJSON());
-        echo json_encode($this->saveProjectArray);
-
-
     }
 }

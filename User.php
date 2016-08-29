@@ -26,6 +26,12 @@ class User
         return $user;
     }
 
+    static function getCryptPassword($password)
+    {
+        $salt = file_get_contents("salt.txt");
+        return crypt($password, $salt);
+    }
+
     static function userExists($username)
     {
         if(file_exists(FileTools::getFileName($username)))

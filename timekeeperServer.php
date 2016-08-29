@@ -4,15 +4,6 @@ include_once "FileTools.php";
 
 header('Access-Control-Allow-Origin: *');
 
-
-
-function getCryptPassword($password)
-{
-    $salt = '$6$rounds=5000$dsfdsfrgreebe3breg#th76i8opüpo$';
-    return crypt($password, $salt);
-}
-
-
 if ($_SERVER['REQUEST_METHOD'] == "POST")
 {
     if(isset($_POST['username']))
@@ -33,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
     if(User::userExists($username))
     {
         $user = User::fromFile($username);
-        if($user->getPassword() == getCryptPassword($password))
+        if($user->getPassword() == User::getCryptPassword($password))
         {
             if(empty($jsonString))
             {
@@ -65,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
     {
         if(!empty($jsonString))
         {
-            $user = new User($username, getCryptPassword($password));
+            $user = new User($username, User::getCryptPassword($password));
             $user->setJSONString($jsonString);
             $user->save();
         }
