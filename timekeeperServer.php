@@ -6,11 +6,16 @@ header('Access-Control-Allow-Origin: *');
 
 if ($_SERVER['REQUEST_METHOD'] == "POST")
 {
+
+    $hash = "";
     $username = "";
     $password = "";
     $jsonString = "";
     $complete = "";
 
+    //hash can be "true" or "false"
+    if(isset($_POST['hash']))
+        $hash = $_POST['hash'];
     if(isset($_POST['username']))
         $username = $_POST['username'];
     if(isset($_POST['password']))
@@ -29,6 +34,12 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
     if(User::userExists($username))
     {
         $user = User::fromFile($username);
+        if($hash != "" && $hash != NULL)
+        {
+            echo $user->getHash();
+            return;
+        }
+
         if($user->getPassword() == User::getCryptPassword($password))
         {
             if(empty($jsonString))

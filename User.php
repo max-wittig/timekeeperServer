@@ -44,6 +44,11 @@ class User
         }
     }
 
+    public function getHash()
+    {
+        return FileTools::getFileHash($this->username);
+    }
+
     public function __construct($username, $password)
     {
         $this->username = $username;

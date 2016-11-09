@@ -13,5 +13,10 @@ class FileTools
         return "users/" . $filename = $username . ".json";
     }
 
+    static function getFileHash($username)
+    {
+        return md5(file_get_contents(self::getFileName($username)));
+    }
+
 
 }
