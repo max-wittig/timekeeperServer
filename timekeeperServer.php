@@ -12,6 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
     $password = "";
     $jsonString = "";
     $complete = "";
+    $saltFilename = "salt.txt";
 
     //hash can be "true" or "false"
     if(isset($_POST['hash']))
@@ -31,6 +32,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
         return;
     }
 
+    FileTools::mkUserDir();
+    FileTools::generateSalt($saltFilename);
+
     if(User::userExists($username))
     {
         $user = User::fromFile($username);
@@ -40,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
             return;
         }
 
-        if($user->getPassword() == User::getCryptPassword($password))
+        if($user->getPassword() == User::getCryptPassword($password, $saltFilename))
         {
             if(empty($jsonString))
             {
@@ -72,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
     {
         if(!empty($jsonString))
         {
-            $user = new User($username, User::getCryptPassword($password));
+            $user = new User($username, User::getCryptPassword($password, $saltFilename));
             $user->setJSONString($jsonString);
             $user->save();
         }
