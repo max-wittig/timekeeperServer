@@ -1,12 +1,6 @@
 <?php
 include_once "JsonHelper.php";
 
-/**
- * Created by IntelliJ IDEA.
- * User: max
- * Date: 09.08.16
- * Time: 18:35
- */
 class User
 {
     private $username = "";
@@ -26,9 +20,9 @@ class User
         return $user;
     }
 
-    static function getCryptPassword($password)
+    static function getCryptPassword($password, $saltFilename)
     {
-        $salt = file_get_contents("salt.txt");
+        $salt = file_get_contents($saltFilename);
         return crypt($password, $salt);
     }
 

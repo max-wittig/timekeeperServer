@@ -1,11 +1,7 @@
 <?php
 include_once "User.php";
-/**
- * Created by IntelliJ IDEA.
- * User: max
- * Date: 25.08.16
- * Time: 21:59
- */
+
+
 class JsonHelper
 {
     private $user;
