@@ -1,0 +1,55 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: timekeeperServer API
+servers:
+  - url: 'http://localhost'
+  - url: 'https://localhost'
+paths:
+  /timekeeperServer/timekeeperServer.php:
+    post:
+      description: |
+        Save timekeeper task
+      operationId: SendTimekeeperJSON
+      parameters:
+        - name: username
+          in: header
+          description: Name of the user
+          required: true
+          schema:
+            type: string
+        - name: password
+          in: header
+          description: Password of the user
+          required: true
+          schema:
+            type: string
+        - name: hash
+          in: header
+          description: Get latest hash of data from user
+          required: false
+          schema:
+            type: string
+            example: 'true'
+        - name: jsonString
+          in: header
+          description: 'If empty, get''s jsonString, if not sets jsonString'
+          required: false
+          schema:
+            type: string
+        - name: complete
+          in: header
+          description: >-
+            If complete overwrite timekeeper tasks, otherwise add to existing
+            json
+          required: false
+          schema:
+            type: string
+            example: 'true'
+      responses:
+        default:
+          description: unexpected error
+          content:
+            text/plain:
+              schema:
+                type: string
